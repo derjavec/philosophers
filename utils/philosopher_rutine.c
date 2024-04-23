@@ -11,36 +11,38 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-void		action_print(t_rules *rules, int id, char *string)
+static void	wait(long long time, t_rules *rules)
 {
-	pthread_mutex_lock(&(rules->writing));
-	if (!(rules->dead))
+	long long start_time;
+	long long current_time;
+
+	start_time = timestamp();
+	while (rules->dead == 0)
 	{
-		printf("%lli ", timestamp() - rules->first_timestamp);
-		printf("%i ", id + 1);
-		printf("%s\n", string);
+		current_time = timestamp();
+		if (current_time - start_time >= time)
+			break ;
+		usleep(50);
 	}
-	pthread_mutex_unlock(&(rules->writing));
-	return ;
 }
 
-void	philo_eats(t_philosopher *phi)
+static void	philo_eats(t_philosopher *phi)
 {
 	t_rules *rules;
 
-	rules = philo->rules;
-	pthread_mutex_lock(&(rules->forks[philo->left_fork_id]));
-	action_print(rules, philo->id, "has taken a fork");
-	pthread_mutex_lock(&(rules->forks[philo->right_fork_id]));
-	action_print(rules, philo->id, "has taken a fork");
+	rules = phi->rules;
+	pthread_mutex_lock(&(rules->forks[phi->left_fork_id]));
+	print_action(rules, phi->id, "has taken left fork");
+	pthread_mutex_lock(&(rules->forks[phi->right_fork_id]));
+	print_action(rules, phi->id, "has taken right fork");
 	pthread_mutex_lock(&(rules->meal_check));
-	action_print(rules, philo->id, "is eating");
-	philo->t_last_meal = timestamp();
+	print_action(rules, phi->id, "is eating");
+	phi->t_last_meal = timestamp();
 	pthread_mutex_unlock(&(rules->meal_check));
-	smart_sleep(rules->time_eat, rules);
-	(philo->x_ate)++;
-	pthread_mutex_unlock(&(rules->forks[philo->left_fork_id]));
-	pthread_mutex_unlock(&(rules->forks[philo->right_fork_id]));
+	wait(rules->time_to_eat, rules);
+	(phi->x_ate)++;
+	pthread_mutex_unlock(&(rules->forks[phi->left_fork_id]));
+	pthread_mutex_unlock(&(rules->forks[phi->right_fork_id]));
 }
 
 void	*philosopher_rutine(void *void_phi)
@@ -51,17 +53,16 @@ void	*philosopher_rutine(void *void_phi)
 
 	i = 0;
 	phi = (t_philosopher *)void_phi;
-	rules = philo->rules;
-	if (phi->id % 2)
-		usleep(15000);                     //porque 15000?
-	while (rules->dead == 0)
+	rules = phi->rules;
+	if (phi->id % 2 == 1)
+		usleep(rules->time_to_eat * 100);
+	while (rules->dead == 0 && rules->all_ate == 0)
 	{
-		philo_eats(philo);
-		if (rules->all_ate == 1)
-			break ;
-		action_print(rules, philo->id, "is sleeping");
-		smart_sleep(rules->time_sleep, rules);
-		action_print(rules, philo->id, "is thinking");
+		philo_eats(phi);
+		print_action(rules, phi->id, "is sleeping");
+		wait(rules->time_to_sleep, rules);
+		print_action(rules, phi->id, "is thinking");
+		check_saved_or_dead(rules, phi);
 		i++;
 	}
 	return (NULL);

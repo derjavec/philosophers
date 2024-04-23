@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philoh"
+#include "philo.h"
 
 size_t	ft_strlen( const char *c)
 {

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-static void fill_data_array(int argc, char *argv[])
+static int *fill_data_array(int argc, char *argv[])
 {
      int  i;
      int  *data;
@@ -20,7 +20,7 @@ static void fill_data_array(int argc, char *argv[])
           ft_error("Wrong number of arguments");
      data = malloc((argc - 1) * sizeof(int));
      if (data == NULL)
-          ft_error("Malloc error in main function");
+          ft_error("Malloc error in fill_data_array function");
      i = 0;  
      while (i < argc -1)
      {
@@ -30,7 +30,7 @@ static void fill_data_array(int argc, char *argv[])
                free (data);
                ft_error("One or more zero or negative arguments found");
           }
-          if (data[1] > 200)
+          if (data[0] > 200)
           {
                free (data);
                ft_error("Please not more than 200 philosophers");
@@ -43,10 +43,14 @@ static void fill_data_array(int argc, char *argv[])
 int  main(int argc, char *argv[])
 {
      int  *data;
-     t_rules   rules;
+     t_rules   *rules;
 
-     data = fill_data_array(int argc, char *[]argv);
-     init_structures(rules, data);
-     philosopher_rutine
+     data = fill_data_array(argc, argv);
+     rules = malloc(sizeof(t_rules));
+     if (rules == NULL)
+       ft_error("Malloc error in main function");   
+     init(rules, data);
+     philo_threads(rules);
+     clean_threads(rules, rules->phi);
 }
 

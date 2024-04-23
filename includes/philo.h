@@ -24,32 +24,38 @@ typedef	struct			s_philosopher
 	int					x_ate;
 	int					left_fork_id;
 	int					right_fork_id;
-	long long			t_last_meal;
-	struct s_rules		*rules;
-	pthread_t			thread_id;
+	long long				t_last_meal;
+	struct s_rules			*rules;
+	pthread_t				thread_id;
 }						t_philosopher;
 
 typedef struct			s_rules
 {
-	int					nb_philo;
-	int					time_death;
-	int					time_eat;
-	int					time_sleep;
-	int					nb_eat;
+	int					philo_quantity;
+	int					time_until_death;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					full_philo_quantity;
 	int					dead;
 	int					all_ate;
-	long long			first_timestamp;
+	long long				first_timestamp;
 	pthread_mutex_t		meal_check;
 	pthread_mutex_t		forks[200];
 	pthread_mutex_t		writing;
-	t_philosopher		phi[200];
-}						t_rules;
+	t_philosopher			phi[200];
+}
+						t_rules;
 size_t	ft_strlen( const char *c);
 
 int       ft_atoi(const char *str, int *data);
 
 void      ft_error(char *msg);
-void      init_structures(t_rules *rules, int *data);
+void      init(t_rules *rules, int *data);
+void		philo_threads(t_rules *rules);
+void		*philosopher_rutine(void *void_phi);
+void		print_action(t_rules *rules, int id, char *str);
+void 	check_saved_or_dead(t_rules *rules, t_philosopher *phi);
+void 	clean_threads(t_rules *rules, t_philosopher *phi);
 
 long long	timestamp(void);
 #endif

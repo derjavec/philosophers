@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_error.c                                         :+:      :+:    :+:   */
+/*   print_action.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/03 08:47:21 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/03 08:47:22 by derjavec         ###   ########.fr       */
+/*   Created: 2024/04/23 11:11:59 by derjavec          #+#    #+#             */
+/*   Updated: 2024/04/23 11:12:00 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "philo.h"
 
-#include"philo.h"
-
-void	ft_error(char *msg)
+void		print_action(t_rules *rules, int id, char *str)
 {
-	size_t	i;
-
-	i = 0;
-	write(2, "Error:", 6);
-	while (i < ft_strlen(msg))
-		write(2, &msg[i++], 1);
-	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
+	pthread_mutex_lock(&(rules->writing));
+	if (!(rules->dead))
+	{
+		printf("%lli ", timestamp() - rules->first_timestamp);
+		printf("%i ", id + 1);
+		printf("%s\n", str);
+	}
+	pthread_mutex_unlock(&(rules->writing));
+	return ;
 }
