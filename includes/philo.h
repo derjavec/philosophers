@@ -37,7 +37,6 @@ typedef struct			s_rules
 	int					time_to_sleep;
 	int					full_philo_quantity;
 	int					dead;
-	int					all_ate;
 	long long				first_timestamp;
 	pthread_mutex_t		meal_check;
 	pthread_mutex_t		forks[200];
@@ -52,9 +51,9 @@ int       ft_atoi(const char *str, int *data);
 void      ft_error(char *msg);
 void      init(t_rules *rules, int *data);
 void		philo_threads(t_rules *rules);
+void		check_if_philo_died(t_rules *rules, t_philosopher *phi);
 void		*philosopher_rutine(void *void_phi);
 void		print_action(t_rules *rules, int id, char *str);
-void 	check_saved_or_dead(t_rules *rules, t_philosopher *phi);
 void 	clean_threads(t_rules *rules, t_philosopher *phi);
 
 long long	timestamp(void);

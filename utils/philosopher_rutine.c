@@ -13,8 +13,8 @@
 
 static void	wait(long long time, t_rules *rules)
 {
-	long long start_time;
-	long long current_time;
+	long long	start_time;
+	long long	current_time;
 
 	start_time = timestamp();
 	while (rules->dead == 0)
@@ -28,7 +28,7 @@ static void	wait(long long time, t_rules *rules)
 
 static void	philo_eats(t_philosopher *phi)
 {
-	t_rules *rules;
+	t_rules	*rules;
 
 	rules = phi->rules;
 	pthread_mutex_lock(&(rules->forks[phi->left_fork_id]));
@@ -51,18 +51,18 @@ void	*philosopher_rutine(void *void_phi)
 	t_philosopher	*phi;
 	t_rules			*rules;
 
-	i = 0;
 	phi = (t_philosopher *)void_phi;
 	rules = phi->rules;
-	if (phi->id % 2 == 1)
-		usleep(rules->time_to_eat * 100);
-	while (rules->dead == 0 && rules->all_ate == 0)
+	i = 0;
+	if (phi->id % 2 == 0)
+		usleep(rules->time_to_eat / 2);
+	while (rules->dead == 0 && phi->x_ate < rules->full_philo_quantity)
 	{
 		philo_eats(phi);
 		print_action(rules, phi->id, "is sleeping");
 		wait(rules->time_to_sleep, rules);
 		print_action(rules, phi->id, "is thinking");
-		check_saved_or_dead(rules, phi);
+		check_if_philo_died(rules, phi);
 		i++;
 	}
 	return (NULL);
