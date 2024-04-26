@@ -29,7 +29,11 @@ void	philo_threads(t_rules *rules)
 		rules->phi[i].thread_id = 0;
 		if (pthread_create(&(rules->phi[i].thread_id), NULL, \
 			philosopher_rutine, &(rules->phi[i])) != 0)
-			ft_error("Error creating thread");
+		{
+			rules->philo_quantity = i;
+			clean_threads(rules, rules->phi);
+			ft_error("Error creating thread", rules);
+		}			
 		i++;
 	}
 }

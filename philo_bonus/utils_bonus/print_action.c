@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_if_philo_died.c                              :+:      :+:    :+:   */
+/*   print_action.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/23 09:56:06 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/25 15:19:43 by derjavec         ###   ########.fr       */
+/*   Created: 2024/04/23 11:11:59 by derjavec          #+#    #+#             */
+/*   Updated: 2024/04/23 11:12:00 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
 
-void	check_if_philo_died(t_rules *rules, t_philosopher *phi)
+void	print_action(t_rules *rules, int id, char *str)
 {
-	pthread_mutex_lock(&(rules->meal_check));
-	if (timestamp() - phi->t_last_meal > rules->time_until_death)
+	sem_wait(rules->sem_writing);
+	if (!(rules->dead))
 	{
-		print_action(rules, phi->id, "died");
-		rules->dead = 1;
+		printf("%lli ", timestamp() - rules->first_timestamp);
+		printf("%i ", id);
+		printf("%s\n", str);
 	}
-	pthread_mutex_unlock(&(rules->meal_check));
+	sem_post(rules->sem_writing);
+	return ;
 }

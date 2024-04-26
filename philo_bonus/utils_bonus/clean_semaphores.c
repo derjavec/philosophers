@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clean_threads.c                                    :+:      :+:    :+:   */
+/*   clean_semaphores.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,35 +11,41 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-static void	wait_threads_to_finish(t_rules *rules, t_philosopher *phi)
+static void	wait_semaphores_to_finish(t_rules *rules, t_philosopher *phi)
+{
+	sem_close(rules->sem_forks);
+	sem_close(rules->sem_writing);
+	sem_close(rules->sem_meal_check);
+	sem_unlink("/sem_forks");
+	sem_unlink("/sem_write");
+	sem_unlink("/sem_mealcheck");
+}
+
+static void	close_semaphores(t_rules *rules)
 {
 	int	i;
+	int	status;
 
 	i = 1;
 	while (i <= rules->philo_quantity)
 	{
-		if (pthread_join(phi[i].thread_id, NULL) != 0)
-			ft_error("Error joining thread");
+		waitpid(-1, &status, 0);
+		if (status != 0)
+		{
+			i = 1;
+			while (i <= rules->philo_quantity)
+			{
+				kill(rules->phi[i].process.id, 15);
+				i++;
+			}
+			break ;
+		}
 		i++;
 	}
 }
 
-static void	destroy_mutex(t_rules *rules)
+void	clean_semaphores(t_rules *rules, t_philosopher *phi)
 {
-	int	i;
-
-	i = 1;
-	while (i <= rules->philo_quantity)
-	{
-		pthread_mutex_destroy(&(rules->forks[i]));
-		i++;
-	}
-	pthread_mutex_destroy(&(rules->writing));
-	pthread_mutex_destroy(&(rules->meal_check));
-}
-
-void	clean_threads(t_rules *rules, t_philosopher *phi)
-{
-	wait_threads_to_finish(rules, phi);
-	destroy_mutex(rules);
+	wait_semaphores_to_finish(rules, phi);
+	close_semaphores(rules);
 }

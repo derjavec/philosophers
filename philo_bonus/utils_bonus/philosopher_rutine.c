@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-static void	wait(long long time, t_rules *rules)
+void	wait(long long time, t_rules *rules)
 {
 	long long	start_time;
 	long long	current_time;
@@ -31,18 +31,26 @@ static void	philo_eats(t_philosopher *phi)
 	t_rules	*rules;
 
 	rules = phi->rules;
-	pthread_mutex_lock(&(rules->forks[phi->left_fork_id]));
-	print_action(rules, phi->id, "has taken left fork");
-	pthread_mutex_lock(&(rules->forks[phi->right_fork_id]));
-	print_action(rules, phi->id, "has taken right fork");
-	pthread_mutex_lock(&(rules->meal_check));
-	print_action(rules, phi->id, "is eating");
-	phi->t_last_meal = timestamp();
-	pthread_mutex_unlock(&(rules->meal_check));
-	wait(rules->time_to_eat, rules);
-	(phi->x_ate)++;
-	pthread_mutex_unlock(&(rules->forks[phi->left_fork_id]));
-	pthread_mutex_unlock(&(rules->forks[phi->right_fork_id]));
+	sem_wait(rules->sem_forks);
+	print_action(rules, phi->id, "has taken a fork");
+	while ((timestamp() - rules->first_timestamp) - phi->t_last_meal <= rules->time_until_death)
+	{
+		if (sem_trywait(rules->sem_forks)== 0)
+		{
+			print_action(rules, phi->id, "has taken right fork");
+			sem_wait(rules->sem_mealcheck);
+			phi->t_last_meal = timestamp() - rules->first_timestamp;
+			print_action(rules, phi->id, "is eating");
+			sem_post(rules->sem_mealcheck);
+			wait(rules->time_to_eat, rules);
+			(phi->x_ate)++;
+			sem_post(rules->sem_forks);
+			return ;
+		}
+	}
+	print_action(rules, phi->id, "died");
+	rules->dead = 1;
+	sem_post(rules->sem_forks);
 }
 
 void	*philosopher_rutine(void *void_phi)
@@ -54,11 +62,13 @@ void	*philosopher_rutine(void *void_phi)
 	phi = (t_philosopher *)void_phi;
 	rules = phi->rules;
 	i = 0;
-	if (phi->id % 2 == 0)
-		usleep(rules->time_to_eat / 2);
-	while (rules->dead == 0 && phi->x_ate < rules->full_philo_quantity)
+	if (phi->id % 2 == 0 || phi->id == rules->philo_quantity)
+		wait(rules->time_to_eat, rules);	
+	while (rules->dead == 0)
 	{
 		philo_eats(phi);
+		if (rules->full_philo_quantity != 0 && phi->x_ate == rules->full_philo_quantity)
+			break ;
 		print_action(rules, phi->id, "is sleeping");
 		wait(rules->time_to_sleep, rules);
 		print_action(rules, phi->id, "is thinking");

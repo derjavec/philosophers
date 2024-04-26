@@ -29,7 +29,7 @@ static const char	*erase_sign(const char *str)
 		return (str);
 }
 
-int	ft_atoi(const char *str, int *data)
+int	ft_atoi(const char *str, t_rules *rules)
 {
 	int	c;
 	int	i;
@@ -41,10 +41,7 @@ int	ft_atoi(const char *str, int *data)
 		sign = -1;
 	str = erase_sign(str);
 	if (str[0] > '9' || str[0] < '0')
-	{
-		free (data);
-		ft_error("One or more not int arguments found");
-	}
+		ft_error("One or more not int arguments found", rules);
 	i = 0;
 	c = 0;
 	while (str[i])

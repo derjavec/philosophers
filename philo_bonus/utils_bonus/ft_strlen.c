@@ -1,25 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_error.c                                         :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/03 08:47:21 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/03 08:47:22 by derjavec         ###   ########.fr       */
+/*   Created: 2024/04/03 08:47:09 by derjavec          #+#    #+#             */
+/*   Updated: 2024/04/03 08:47:11 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philo.h"
+#include "philo.h"
 
-void	ft_error(char *msg)
+size_t	ft_strlen( const char *c)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-	write(2, "Error:", 6);
-	while (i < ft_strlen(msg))
-		write(2, &msg[i++], 1);
-	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
+	while (c[i])
+		i++;
+	return (i);
 }
