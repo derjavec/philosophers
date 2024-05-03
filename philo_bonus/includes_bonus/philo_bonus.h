@@ -16,6 +16,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
 # include <pthread.h>
 # include <semaphore.h>
 
@@ -38,9 +41,9 @@ typedef struct			s_rules
 	int			full_philo_quantity;
 	int			dead;
 	long long		first_timestamp;
-	sem_t		meal_check;
-	sem_t		forks[200];
-	sem_t		writing;
+	sem_t		*meal_check;
+	sem_t		*forks;
+	sem_t		*writing;
 	t_philosopher	phi[200];
 }					t_rules;
 
@@ -54,7 +57,7 @@ void		philo_process(t_rules *rules);
 void		check_if_philo_died(t_rules *rules, t_philosopher *phi);
 void		*philosopher_rutine(void *void_phi);
 void		print_action(t_rules *rules, int id, char *str);
-void 	clean_semaphores(t_rules *rules, t_philosopher *phi);
+void 	clean_semaphores(t_rules *rules);
 
 long long	timestamp(void);                          
 #endif

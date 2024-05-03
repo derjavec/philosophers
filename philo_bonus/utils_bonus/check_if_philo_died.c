@@ -9,16 +9,16 @@
 /*   Updated: 2024/04/25 15:19:43 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	check_if_philo_died(t_rules *rules, t_philosopher *phi)
 {
 
-	sem_wait(sem_mealcheck);
+	sem_wait(rules->meal_check);
 	if ((timestamp() - rules->first_timestamp) - phi->t_last_meal > rules->time_until_death)
 	{
 		print_action(rules, phi->id, "died");
 		rules->dead = 1;
 	}
-	sem_post(sem_mealcheck);
+	sem_post(rules->meal_check);
 }

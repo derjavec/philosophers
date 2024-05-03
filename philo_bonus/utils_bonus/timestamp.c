@@ -9,7 +9,7 @@
 /*   Updated: 2024/04/22 13:41:34 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
 long long	timestamp(void)
 {

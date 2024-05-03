@@ -9,17 +9,17 @@
 /*   Updated: 2024/04/23 11:12:00 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	print_action(t_rules *rules, int id, char *str)
 {
-	sem_wait(rules->sem_writing);
-	if (!(rules->dead))
+	sem_wait(rules->writing);
+	if (rules->dead == 0)
 	{
 		printf("%lli ", timestamp() - rules->first_timestamp);
 		printf("%i ", id);
 		printf("%s\n", str);
 	}
-	sem_post(rules->sem_writing);
+	sem_post(rules->writing);
 	return ;
 }

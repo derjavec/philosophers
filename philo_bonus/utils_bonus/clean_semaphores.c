@@ -9,16 +9,22 @@
 /*   Updated: 2024/04/25 15:23:31 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
-static void	wait_semaphores_to_finish(t_rules *rules, t_philosopher *phi)
+static void	wait_semaphores_to_finish(t_rules *rules)
 {
-	sem_close(rules->sem_forks);
-	sem_close(rules->sem_writing);
-	sem_close(rules->sem_meal_check);
-	sem_unlink("/sem_forks");
-	sem_unlink("/sem_write");
-	sem_unlink("/sem_mealcheck");
+	if (sem_close(rules->meal_check) == -1)
+		ft_error("Closing writing semaphore", rules);
+	if (sem_close(rules->writing) == -1)
+		ft_error("Closing writing semaphore", rules);
+	if (sem_close(rules->forks) == -1)
+		ft_error("Closing forks semaphore", rules);
+	if (sem_unlink("/sem_mealcheck") == -1)
+		ft_error("Unlinking meal_check semaphore", rules);
+	if (sem_unlink("/sem_writing") == -1)
+		ft_error("Unlinking writing semaphore", rules);
+	if (sem_unlink("/sem_forks") == -1)
+		ft_error("Unlinking forks semaphore", rules);
 }
 
 static void	close_semaphores(t_rules *rules)
@@ -29,23 +35,22 @@ static void	close_semaphores(t_rules *rules)
 	i = 1;
 	while (i <= rules->philo_quantity)
 	{
-		waitpid(-1, &status, 0);
-		if (status != 0)
+		waitpid(rules->phi[i].process_id, &status, 0);
+		if (status!= 0)
 		{
-			i = 1;
 			while (i <= rules->philo_quantity)
 			{
-				kill(rules->phi[i].process.id, 15);
+				kill(rules->phi[i].process_id, 15);
 				i++;
 			}
 			break ;
-		}
+		}		
 		i++;
 	}
 }
 
-void	clean_semaphores(t_rules *rules, t_philosopher *phi)
+void	clean_semaphores(t_rules *rules)
 {
-	wait_semaphores_to_finish(rules, phi);
+	wait_semaphores_to_finish(rules);
 	close_semaphores(rules);
 }

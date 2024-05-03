@@ -9,7 +9,7 @@
 /*   Updated: 2024/04/25 15:24:58 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
 static void	init_semaphores(t_rules *rules)
 {

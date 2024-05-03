@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"philo.h"
+#include"philo_bonus.h"
 
 void	ft_error(char *msg, t_rules *rules)
 {

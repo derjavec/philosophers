@@ -40,7 +40,8 @@ int	main(int argc, char *argv[])
 		ft_error("Malloc error in main function", rules);
 	fill_data_array(argc, argv, data, rules);
 	init(rules, data);
-	philo_threads(rules);
-	clean_threads(rules, rules->phi);
+	philo_process(rules);
+	clean_semaphores(rules);
 	free(rules);
 	return (0);
+}

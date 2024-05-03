@@ -9,7 +9,7 @@
 /*   Updated: 2023/10/20 11:20:42 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo.h"
+#include "philo_bonus.h"
 
 static const char	*erase_spaces(const char *str)
 {
