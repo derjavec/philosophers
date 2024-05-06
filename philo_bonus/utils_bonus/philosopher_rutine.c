@@ -31,11 +31,11 @@ static void	philo_eats(t_philosopher *phi)
 	t_rules	*rules;
 
 	rules = phi->rules;
-	sem_wait(rules->forks);
-	print_action(rules, phi->id, "has taken a fork");
+	if (sem_wait(rules->forks) == 0)
+		print_action(rules, phi->id, "has taken a fork");
 	while ((timestamp() - rules->first_timestamp) - phi->t_last_meal <= rules->time_until_death)
 	{
-		if (sem_wait(rules->forks)== 0)
+		if (sem_wait(rules->forks) == 0)
 		{
 			print_action(rules, phi->id, "has taken another fork");
 			sem_wait(rules->meal_check);

@@ -13,9 +13,12 @@
 
 static void	init_semaphores(t_rules *rules)
 {
-	rules->forks = sem_open("/sem_forks", O_CREAT, S_IRWXU, rules->philo_quantity);
-	rules->writing = sem_open("sem_writing", O_CREAT, S_IRWXU, 0);
-	rules->meal_check = sem_open("sem_mealcheck", O_CREAT, S_IRWXU, 0);
+	sem_unlink("/sem_forks");
+	sem_unlink("sem_writing");
+	sem_unlink("sem_mealcheck");
+	rules->forks = sem_open("/sem_forks", O_CREAT | O_EXCL, 0644, rules->philo_quantity);
+	rules->writing = sem_open("sem_writing", O_CREAT | O_EXCL, 0644, 1);
+	rules->meal_check = sem_open("sem_mealcheck", O_CREAT | O_EXCL, 0644, 1);
 	if (rules->forks <= SEM_FAILED || rules->writing <= SEM_FAILED || rules->meal_check <= SEM_FAILED)
 		ft_error("Inicializing semaphores", rules);
 }
