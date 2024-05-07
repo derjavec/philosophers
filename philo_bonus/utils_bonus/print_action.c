@@ -14,7 +14,7 @@
 void	print_action(t_rules *rules, int id, char *str)
 {
 	sem_wait(rules->writing);
-	if (rules->dead == 0)
+	if (rules->phi->dead == 0)
 	{
 		printf("%lli ", timestamp() - rules->first_timestamp);
 		printf("%i ", id);

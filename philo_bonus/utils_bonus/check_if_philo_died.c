@@ -18,7 +18,7 @@ void	check_if_philo_died(t_rules *rules, t_philosopher *phi)
 	if ((timestamp() - rules->first_timestamp) - phi->t_last_meal > rules->time_until_death)
 	{
 		print_action(rules, phi->id, "died");
-		rules->dead = 1;
+		phi->dead = 1;
 	}
 	sem_post(rules->meal_check);
 }

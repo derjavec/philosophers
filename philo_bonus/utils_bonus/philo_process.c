@@ -14,20 +14,21 @@
 void	philo_process(t_rules *rules)
 {
 	int	i;
+//	int	status;
 
 	i = 1;
 	while (i <= rules->philo_quantity)
 	{
 		rules->phi[i].id = i;
 		rules->phi[i].x_ate = 0;
+		rules->phi[i].dead = 0;
 		rules->phi[i].t_last_meal = 0;
 		rules->phi[i].rules = rules;
-		rules->phi[i].thread_id = 0;
 		rules->phi[i].process_id = fork();
 		if (rules->phi[i].process_id < 0)
 			ft_error("Forking", rules);
 		if (rules->phi[i].process_id == 0)
-			philosopher_rutine(&rules->phi[i]);		
+			philosopher_rutine(&rules->phi[i]);
 		i++;
 	}
 }

@@ -26,9 +26,9 @@ typedef	struct			s_philosopher
 {
 	int					id;
 	int					x_ate;
+	int					dead;
 	long long				t_last_meal;
 	struct s_rules			*rules;
-	pthread_t				thread_id;
 	pid_t				process_id;
 }						t_philosopher;
 
@@ -39,7 +39,6 @@ typedef struct			s_rules
 	int			time_to_eat;
 	int			time_to_sleep;
 	int			full_philo_quantity;
-	int			dead;
 	long long		first_timestamp;
 	sem_t		*meal_check;
 	sem_t		*forks;

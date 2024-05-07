@@ -17,7 +17,7 @@ static void	ft_wait(long long time, t_rules *rules)
 	long long	current_time;
 
 	start_time = timestamp();
-	while (rules->dead == 0)
+	while (rules->phi->dead == 0)
 	{
 		current_time = timestamp();
 		if (current_time - start_time >= time)
@@ -35,7 +35,7 @@ static void	philo_eats(t_philosopher *phi)
 		print_action(rules, phi->id, "has taken a fork");
 	while ((timestamp() - rules->first_timestamp) - phi->t_last_meal <= rules->time_until_death)
 	{
-		if (sem_wait(rules->forks) == 0)
+		if (sem_trywait(rules->forks) == 0)
 		{
 			print_action(rules, phi->id, "has taken another fork");
 			sem_wait(rules->meal_check);
@@ -45,11 +45,13 @@ static void	philo_eats(t_philosopher *phi)
 			ft_wait(rules->time_to_eat, rules);
 			(phi->x_ate)++;
 			sem_post(rules->forks);
+			sem_post(rules->forks);
 			return ;
 		}
 	}
 	print_action(rules, phi->id, "died");
-	rules->dead = 1;
+	phi->dead = 1;
+	sem_post(rules->forks);
 	sem_post(rules->forks);
 }
 
@@ -64,9 +66,11 @@ void	*philosopher_rutine(void *void_phi)
 	if (phi->id % 2 == 0 || phi->id == rules->philo_quantity)
 		ft_wait(rules->time_to_eat, rules);	
 	i = 0;	
-	while (rules->dead == 0)
+	while (phi->dead == 0)
 	{
 		philo_eats(phi);
+		if (phi->dead == 1)
+			break ;
 		if (rules->full_philo_quantity != 0 && phi->x_ate == rules->full_philo_quantity)
 			break ;
 		print_action(rules, phi->id, "is sleeping");
