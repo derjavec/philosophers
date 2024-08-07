@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 11:00:44 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/25 15:02:34 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/07 09:43:59 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "philo.h"
 
 static void	fill_data_array(int argc, char *argv[], int *data, t_rules *rules)
@@ -36,7 +37,6 @@ int	main(int argc, char *argv[])
 {
 	int		data[5];
 	t_rules	*rules;
-	int	i;
 
 	rules = malloc(sizeof(t_rules));
 	if (rules == NULL)
@@ -44,21 +44,7 @@ int	main(int argc, char *argv[])
 	fill_data_array(argc, argv, data, rules);
 	init(rules, data);
 	philo_threads(rules);
-	i = 1;
-	while (1)
-	{
-		if ((rules->full_philo_quantity != 0 && rules->phi[i].x_ate == rules->full_philo_quantity) || rules->dead == 1)
-			break ;
-		if (i > rules->philo_quantity)
-			i = 1;
-		if (rules->phi[i].x_ate < rules->full_philo_quantity && (timestamp() - rules->first_timestamp) - rules->phi[i].t_last_meal > rules->time_until_death)
-		{
-			print_action(rules, rules->phi[i].id, "died");
-			rules->dead = 1;
-			break ;
-		}
-		i++;
-	}	
+	check_if_philo_died(rules);
 	clean_threads(rules, rules->phi);
 	free(rules);
 	return (0);

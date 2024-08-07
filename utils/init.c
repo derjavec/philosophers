@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:23:59 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/25 15:24:58 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/07 14:49:51 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "philo.h"
 
 static void	init_mutex(t_rules *rules)
@@ -17,6 +18,7 @@ static void	init_mutex(t_rules *rules)
 
 	pthread_mutex_init(&(rules->meal_check), NULL);
 	pthread_mutex_init(&(rules->writing), NULL);
+	pthread_mutex_init(&(rules->dead_check), NULL);
 	i = 1;
 	while (i <= rules->philo_quantity)
 	{
@@ -32,6 +34,7 @@ void	init(t_rules *rules, int *data)
 	rules->time_to_eat = data[2];
 	rules->time_to_sleep = data[3];
 	rules->full_philo_quantity = data[4];
+	rules->philo_ate_all = 0;
 	rules->dead = 0;
 	rules->first_timestamp = timestamp();
 	init_mutex(rules);

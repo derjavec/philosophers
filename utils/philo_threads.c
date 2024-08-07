@@ -1,34 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_process.c                                    :+:      :+:    :+:   */
+/*   philo_threads.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: derjavec <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 14:02:43 by derjavec          #+#    #+#             */
-/*   Updated: 2024/04/25 15:22:07 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/07 09:25:24 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "philo_bonus.h"
 
-void	philo_process(t_rules *rules)
+#include "philo.h"
+
+void	philo_threads(t_rules *rules)
 {
 	int	i;
-//	int	status;
 
 	i = 1;
 	while (i <= rules->philo_quantity)
 	{
 		rules->phi[i].id = i;
 		rules->phi[i].x_ate = 0;
-		rules->phi[i].dead = 0;
+		rules->phi[i].left_fork_id = i;
+		rules->phi[i].right_fork_id = (i + 1) % rules->philo_quantity;
+		if (rules->phi[i].right_fork_id == 0)
+			rules->phi[i].right_fork_id = rules->philo_quantity;
 		rules->phi[i].t_last_meal = 0;
 		rules->phi[i].rules = rules;
-		rules->phi[i].process_id = fork();
-		if (rules->phi[i].process_id < 0)
-			ft_error("Forking", rules);
-		if (rules->phi[i].process_id == 0)
-			philosopher_rutine(&rules->phi[i]);
+		rules->phi[i].thread_id = 0;
+		if (pthread_create(&(rules->phi[i].thread_id), NULL, \
+			philosopher_rutine, &(rules->phi[i])) != 0)
+		{
+			rules->philo_quantity = i;
+			clean_threads(rules, rules->phi);
+			ft_error("Error creating thread", rules);
+		}			
 		i++;
 	}
 }
