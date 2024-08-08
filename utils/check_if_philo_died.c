@@ -6,7 +6,7 @@
 /*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 09:56:06 by derjavec          #+#    #+#             */
-/*   Updated: 2024/08/07 17:24:02 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:53:00 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,30 +21,41 @@ static void	kill_philo(t_rules *rules, int i)
 	pthread_mutex_unlock(&(rules->meal_check));
 }
 
-void	check_if_philo_died(t_rules *rules)
+static void	check_all_ate(t_rules *rules, int i)
+{
+	pthread_mutex_lock(&(rules->ate_check));
+	if (rules->full_philo_quantity != 0 \
+		&& rules->phi[i].x_ate >= rules->full_philo_quantity)
+		rules->philo_ate_all++;
+	pthread_mutex_unlock(&(rules->ate_check));
+}
+
+static int	check_dead(t_rules *rules)
 {
 	int	i;
 
 	i = 1;
-	while (rules->philo_ate_all < rules->philo_quantity)
+	while (i <= rules->philo_quantity)
 	{
-		while (i <= rules->philo_quantity && rules->dead == 0)
+		pthread_mutex_lock(&(rules->meal_check));
+		if ((timestamp() - rules->first_timestamp) \
+			- rules->phi[i].t_last_meal > rules->time_until_death)
 		{
-			pthread_mutex_lock(&(rules->meal_check));
-			if ((timestamp() - rules->first_timestamp) \
-				- rules->phi[i].t_last_meal > rules->time_until_death)
-			{
-				kill_philo(rules, i);
-				break ;
-			}
-			pthread_mutex_unlock(&(rules->meal_check));
-			i++;
+			kill_philo(rules, i);
+			return (1);
 		}
-		if (rules->dead != 0)
+		pthread_mutex_unlock(&(rules->meal_check));
+		check_all_ate(rules, i);
+		i++;
+	}
+	return (0);
+}
+
+void	check_if_philo_died(t_rules *rules)
+{
+	while (rules->philo_ate_all < rules->philo_quantity)
+	{	
+		if (check_dead(rules) != 0)
 			break ;
-		i = 1;
-		if (rules->full_philo_quantity != 0 \
-			&& rules->phi[i].x_ate >= rules->full_philo_quantity)
-			rules->philo_ate_all++;
 	}
 }

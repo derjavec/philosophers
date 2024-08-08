@@ -6,7 +6,7 @@
 /*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 11:00:44 by derjavec          #+#    #+#             */
-/*   Updated: 2024/08/07 09:43:59 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/08 09:32:01 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ static void	fill_data_array(int argc, char *argv[], int *data, t_rules *rules)
 		data[i] = ft_atoi(argv[i + 1], rules);
 		if (data[i] < 0 || (data == 0 && i < 5))
 			ft_error("One or more zero or negative arguments found", rules);
-		if (data[0] > 200)
-			ft_error("Please not more than 200 philosophers", rules);
 		i++;
 	}
 	if (i == 4)
@@ -46,6 +44,8 @@ int	main(int argc, char *argv[])
 	philo_threads(rules);
 	check_if_philo_died(rules);
 	clean_threads(rules, rules->phi);
+	free(rules->forks);
+	free(rules->phi);
 	free(rules);
 	return (0);
 }

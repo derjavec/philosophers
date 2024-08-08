@@ -6,7 +6,7 @@
 /*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 11:00:33 by derjavec          #+#    #+#             */
-/*   Updated: 2024/08/07 17:22:12 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:18:54 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,12 @@ typedef struct s_philosopher
 typedef struct s_rules
 {
 	pthread_mutex_t		meal_check;
+	pthread_mutex_t		ate_check;
 	pthread_mutex_t		dead_check;
-	pthread_mutex_t		forks[200];
+	pthread_mutex_t		*forks;
 	pthread_mutex_t		writing;
 	long long			first_timestamp;
-	t_philosopher		phi[200];
+	t_philosopher		*phi;
 	int					philo_quantity;
 	int					philo_ate_all;
 	int					time_until_death;

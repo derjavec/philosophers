@@ -6,7 +6,7 @@
 /*   By: derjavec <derjavec@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 13:52:54 by derjavec          #+#    #+#             */
-/*   Updated: 2024/08/07 18:20:48 by derjavec         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:20:04 by derjavec         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,9 @@ static void	philo_eats(t_rules *rules, t_philosopher *phi)
 	print_action(rules, phi->id, "is eating");
 	pthread_mutex_unlock(&(rules->meal_check));
 	wait(rules->time_to_eat, rules);
+	pthread_mutex_lock(&(rules->ate_check));
 	(phi->x_ate)++;
+	pthread_mutex_unlock(&(rules->ate_check));
 	pthread_mutex_unlock(&(rules->forks[phi->left_fork_id]));
 	pthread_mutex_unlock(&(rules->forks[phi->right_fork_id]));
 }
@@ -85,13 +87,11 @@ static int	eat_sleep_and_think(t_rules *rules, t_philosopher *phi)
 
 void	*philosopher_rutine(void *void_phi)
 {
-	int				i;
 	t_philosopher	*phi;
 	t_rules			*rules;
 
 	phi = (t_philosopher *)void_phi;
 	rules = phi->rules;
-	i = 0;
 	if (phi->id % 2 == 0 || phi->id == rules->philo_quantity)
 		wait(rules->time_to_eat, rules);
 	while (1)
